@@ -8,11 +8,9 @@ interface BookGridProps {
 
 function BookGrid({ books, onBorrow }: BookGridProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid">
       {books.map((book) => (
-        <div key={book.id} onClick={() => onBorrow?.(book.id)}>
-          <BookCard book={book} />
-        </div>
+        <BookCard key={book.id} book={book} onBorrow={onBorrow} />
       ))}
     </div>
   )

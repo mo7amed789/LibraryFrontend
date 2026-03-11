@@ -31,72 +31,52 @@ function MyBooks() {
       }
     }
 
-    if (isAuthenticated) {
-      fetchBorrowedBooks()
-    }
+    if (isAuthenticated) fetchBorrowedBooks()
   }, [isAuthenticated])
 
   const handleReturn = async (borrowId: number) => {
     try {
       await returnBook(borrowId)
-      setBorrowedBooks(borrowedBooks.filter((b) => b.id !== borrowId))
-      alert("Book returned successfully!")
+      setBorrowedBooks((prev) => prev.filter((b) => b.id !== borrowId))
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to return book")
+      setError(err instanceof Error ? err.message : "Failed to return book")
     }
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
-  }
+  if (!isAuthenticated) return <Navigate to="/login" replace />
 
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">My Books</h1>
-            <p className="text-gray-600">Books you've borrowed</p>
+      <div className="page">
+        <header className="section-title">
+          <h1>My Borrowed Books</h1>
+          <p className="helper">Track due dates and return books with one click.</p>
+        </header>
+
+        {error && <div className="error">{error}</div>}
+
+        {isLoading ? (
+          <div className="empty">Loading your books...</div>
+        ) : borrowedBooks.length === 0 ? (
+          <div className="glass empty">You haven't borrowed any books yet.</div>
+        ) : (
+          <div className="grid">
+            {borrowedBooks.map((book) => {
+              const due = new Date(book.dueDate)
+              const isOverdue = due.getTime() < Date.now()
+              return (
+                <article key={book.id} className="glass book-card">
+                  <h3 className="book-title">{book.title}</h3>
+                  <p className="book-author">by {book.author}</p>
+                  <p className="helper">Borrowed: {new Date(book.borrowDate).toLocaleDateString()}</p>
+                  <p className="helper">Due: {due.toLocaleDateString()} {isOverdue ? "(Overdue)" : "(On time)"}</p>
+                  <button onClick={() => handleReturn(book.id)} className="btn">Return Book</button>
+                </article>
+              )
+            })}
           </div>
-
-          {error && (
-            <div className="rounded-md bg-red-50 p-4 mb-4">
-              <p className="text-red-800">{error}</p>
-            </div>
-          )}
-
-          {isLoading ? (
-            <div className="text-center py-12">
-              <p className="text-gray-600">Loading your books...</p>
-            </div>
-          ) : borrowedBooks.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-600">You haven't borrowed any books yet</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {borrowedBooks.map((book) => (
-                <div key={book.id} className="bg-white rounded-lg shadow-md p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">{book.title}</h3>
-                  <p className="text-gray-600 mb-4">{book.author}</p>
-                  <p className="text-sm text-gray-500 mb-2">
-                    Borrowed: {new Date(book.borrowDate).toLocaleDateString()}
-                  </p>
-                  <p className="text-sm text-gray-500 mb-4">
-                    Due: {new Date(book.dueDate).toLocaleDateString()}
-                  </p>
-                  <button
-                    onClick={() => handleReturn(book.id)}
-                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-md"
-                  >
-                    Return Book
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </>
   )
