@@ -1,9 +1,10 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { registerUser } from "../api/authApi"
+import { Link, useNavigate } from "react-router-dom"
+import { useAuth } from "../context/AuthContext"
 
 function Register() {
   const navigate = useNavigate()
+  const { register } = useAuth()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -23,7 +24,7 @@ function Register() {
     setIsLoading(true)
 
     try {
-      await registerUser(email, password, name)
+      await register(email, password, name)
       navigate("/")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed")
@@ -33,23 +34,16 @@ function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md space-y-8">
-        <div>
-          <h2 className="text-center text-3xl font-bold tracking-tight text-gray-900">
-            Create Your Account
-          </h2>
-        </div>
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-violet-100 px-4">
+      <div className="w-full max-w-md rounded-2xl border border-white/80 bg-white/90 p-8 shadow-xl backdrop-blur">
+        <h2 className="text-center text-3xl font-black tracking-tight text-gray-900">Create your account</h2>
+        <p className="mt-2 text-center text-sm text-gray-600">Join the library and start borrowing instantly.</p>
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="rounded-md bg-red-50 p-4">
-              <p className="text-red-800">{error}</p>
-            </div>
-          )}
+        <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+          {error && <div className="rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</div>}
 
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="name" className="mb-1 block text-sm font-medium text-gray-700">
               Full Name
             </label>
             <input
@@ -58,13 +52,13 @@ function Register() {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900"
               placeholder="John Doe"
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700">
               Email Address
             </label>
             <input
@@ -73,13 +67,13 @@ function Register() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700">
               Password
             </label>
             <input
@@ -88,13 +82,13 @@ function Register() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900"
               placeholder="••••••••"
             />
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="confirmPassword" className="mb-1 block text-sm font-medium text-gray-700">
               Confirm Password
             </label>
             <input
@@ -103,7 +97,7 @@ function Register() {
               required
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900"
               placeholder="••••••••"
             />
           </div>
@@ -111,16 +105,16 @@ function Register() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+            className="w-full rounded-md bg-indigo-600 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50"
           >
             {isLoading ? "Creating account..." : "Create account"}
           </button>
 
           <p className="text-center text-sm text-gray-600">
             Already have an account?{" "}
-            <a href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+            <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
               Login here
-            </a>
+            </Link>
           </p>
         </form>
       </div>
