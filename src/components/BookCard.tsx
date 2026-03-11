@@ -10,6 +10,19 @@ function BookCard({ book, onBorrow }: Props) {
   const canBorrow = availableCopies > 0
 
   return (
+    <article className="glass book-card">
+      <div className="meta">
+        <span>{book.genre || "General"}</span>
+        <span>{book.publishedYear ?? "Classic"}</span>
+      </div>
+      <h3 className="book-title">{book.title}</h3>
+      <p className="book-author">by {book.author}</p>
+      <p className="book-desc">{book.description}</p>
+      <div className="meta">
+        <span>Availability: {availableCopies}/{book.totalCopies ?? availableCopies}</span>
+        <span>⭐ {book.rating ?? "4.5"}</span>
+      </div>
+      <button disabled={!canBorrow} onClick={() => onBorrow?.(book.id)} className="btn">
     <article className="group flex h-full flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
       <div className="mb-3 flex items-start justify-between gap-2">
         <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">

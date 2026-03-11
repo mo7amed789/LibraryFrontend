@@ -31,9 +31,7 @@ function MyBooks() {
       }
     }
 
-    if (isAuthenticated) {
-      fetchBorrowedBooks()
-    }
+    if (isAuthenticated) fetchBorrowedBooks()
   }, [isAuthenticated])
 
   const handleReturn = async (borrowId: number) => {
@@ -45,13 +43,40 @@ function MyBooks() {
     }
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
-  }
+  if (!isAuthenticated) return <Navigate to="/login" replace />
 
   return (
     <>
       <Navbar />
+      <div className="page">
+        <header className="section-title">
+          <h1>My Borrowed Books</h1>
+          <p className="helper">Track due dates and return books with one click.</p>
+        </header>
+
+        {error && <div className="error">{error}</div>}
+
+        {isLoading ? (
+          <div className="empty">Loading your books...</div>
+        ) : borrowedBooks.length === 0 ? (
+          <div className="glass empty">You haven't borrowed any books yet.</div>
+        ) : (
+          <div className="grid">
+            {borrowedBooks.map((book) => {
+              const due = new Date(book.dueDate)
+              const isOverdue = due.getTime() < Date.now()
+              return (
+                <article key={book.id} className="glass book-card">
+                  <h3 className="book-title">{book.title}</h3>
+                  <p className="book-author">by {book.author}</p>
+                  <p className="helper">Borrowed: {new Date(book.borrowDate).toLocaleDateString()}</p>
+                  <p className="helper">Due: {due.toLocaleDateString()} {isOverdue ? "(Overdue)" : "(On time)"}</p>
+                  <button onClick={() => handleReturn(book.id)} className="btn">Return Book</button>
+                </article>
+              )
+            })}
+          </div>
+        )}
       <div className="min-h-screen bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
           <header className="mb-8">

@@ -14,7 +14,6 @@ function Login() {
     e.preventDefault()
     setError("")
     setIsLoading(true)
-
     try {
       await login(email, password)
       navigate("/")
@@ -26,6 +25,16 @@ function Login() {
   }
 
   return (
+    <div className="auth-wrap">
+      <div className="glass auth-card">
+        <h2>Welcome Back</h2>
+        <p className="helper">Access your futuristic library console.</p>
+        <form className="form" onSubmit={handleSubmit}>
+          {error && <div className="error">{error}</div>}
+          <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
+          <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
+          <button type="submit" disabled={isLoading} className="btn">{isLoading ? "Signing in..." : "Sign in"}</button>
+          <p className="helper">Don't have an account? <Link to="/register">Register here</Link></p>
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-violet-100 px-4">
       <div className="w-full max-w-md rounded-2xl border border-white/80 bg-white/90 p-8 shadow-xl backdrop-blur">
         <h2 className="text-center text-3xl font-black tracking-tight text-gray-900">Welcome back</h2>

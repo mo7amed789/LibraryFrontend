@@ -31,6 +31,7 @@ function Books() {
     fetchBooks()
   }, [])
 
+  const genres = useMemo(() => ["all", ...new Set(books.map((book) => book.genre).filter(Boolean) as string[])], [books])
   const genres = useMemo(
     () => ["all", ...new Set(books.map((book) => book.genre).filter(Boolean) as string[])],
     [books]
@@ -52,6 +53,10 @@ function Books() {
       })
       .sort((a, b) => {
         switch (sortBy) {
+          case "title-desc": return b.title.localeCompare(a.title)
+          case "author-asc": return a.author.localeCompare(b.author)
+          case "rating-desc": return (b.rating ?? 0) - (a.rating ?? 0)
+          default: return a.title.localeCompare(b.title)
           case "title-desc":
             return b.title.localeCompare(a.title)
           case "author-asc":
@@ -78,6 +83,41 @@ function Books() {
   return (
     <>
       <Navbar />
+      <div className="page">
+        <section className="glass hero">
+          <h1>Discover Your Next Favorite Book</h1>
+          <p>Futuristic digital library experience: smart search, smooth borrowing, and real-time discovery insights.</p>
+          <div className="stats">
+            <div className="stat"><p className="label">Books</p><p className="value">{books.length}</p></div>
+            <div className="stat"><p className="label">Genres</p><p className="value">{Math.max(genres.length - 1, 0)}</p></div>
+            <div className="stat"><p className="label">Available</p><p className="value">{books.filter((book) => (book.availableCopies ?? 1) > 0).length}</p></div>
+            <div className="stat"><p className="label">Filtered</p><p className="value">{filteredBooks.length}</p></div>
+          </div>
+        </section>
+
+        <section className="glass filters">
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search by title, author, or description..." />
+          <select value={genre} onChange={(e) => setGenre(e.target.value)}>
+            {genres.map((item) => <option key={item} value={item}>{item === "all" ? "All genres" : item}</option>)}
+          </select>
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value as SortOption)}>
+            <option value="title-asc">Title (A-Z)</option>
+            <option value="title-desc">Title (Z-A)</option>
+            <option value="author-asc">Author (A-Z)</option>
+            <option value="rating-desc">Top rated</option>
+          </select>
+        </section>
+
+        {error && <div className="error">{error}</div>}
+        {successMessage && <div className="success">{successMessage}</div>}
+
+        {isLoading ? (
+          <div className="empty">Loading books...</div>
+        ) : filteredBooks.length === 0 ? (
+          <div className="glass empty">No books match your filters.</div>
+        ) : (
+          <BookGrid books={filteredBooks} onBorrow={handleBorrow} />
+        )}
       <div className="min-h-screen bg-gradient-to-b from-indigo-50 via-white to-white">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
           <section className="mb-8 rounded-3xl bg-gradient-to-r from-indigo-700 to-violet-600 p-8 text-white shadow-xl">
