@@ -16,6 +16,9 @@ function AdminDashboard() {
   }, [])
 
   if (!isAuthenticated) return <Navigate to="/login" replace />
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />
+  }
 
   return (
     <>
@@ -35,6 +38,32 @@ function AdminDashboard() {
             <div className="stat glass"><p className="label">Total Users</p><p className="value">{stats.totalUsers}</p></div>
           </div>
         )}
+      <div className="min-h-screen bg-gray-50">
+        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+          <h1 className="mb-2 text-4xl font-black text-gray-900">Admin Dashboard</h1>
+          <p className="mb-8 text-gray-600">A quick snapshot of your library system.</p>
+
+          {isLoading ? (
+            <div className="py-12 text-center text-gray-600">Loading dashboard...</div>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              <div className="rounded-2xl bg-white p-6 shadow-sm">
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Total Books</h3>
+                <p className="text-4xl font-bold text-indigo-600">{stats.totalBooks}</p>
+              </div>
+
+              <div className="rounded-2xl bg-white p-6 shadow-sm">
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Borrowed Books</h3>
+                <p className="text-4xl font-bold text-amber-600">{stats.borrowedBooks}</p>
+              </div>
+
+              <div className="rounded-2xl bg-white p-6 shadow-sm">
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">Total Users</h3>
+                <p className="text-4xl font-bold text-emerald-600">{stats.totalUsers}</p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </>
   )
