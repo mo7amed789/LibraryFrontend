@@ -7,6 +7,7 @@ function Register() {
   const { register } = useAuth()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
+  const [phoneNumber, setPhoneNumber] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState("")
@@ -23,7 +24,7 @@ function Register() {
 
     setIsLoading(true)
     try {
-      await register(email, password, name)
+      await register(email, password, name, phoneNumber)
       navigate("/")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed")
@@ -41,6 +42,13 @@ function Register() {
           {error && <div className="error">{error}</div>}
           <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" />
           <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
+          <input
+            type="tel"
+            required
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            placeholder="Phone number"
+          />
           <input
             type="password"
             required

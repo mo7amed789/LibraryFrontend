@@ -76,6 +76,9 @@ const postWithFallback = async (
 export const loginUser = async (email: string, password: string) => {
   const data = await postWithFallback(LOGIN_ENDPOINTS, [{ email, password }], "Login failed")
   const token = extractToken(data)
+export const loginUser = async (email: string, password: string) => {
+  const data = await postWithFallback(LOGIN_ENDPOINTS, [{ email, password }], "Login failed")
+  const token = extractToken(data)
 const extractToken = (data: AuthResponse) => data.token ?? data.accessToken ?? data.jwt
 
 export const loginUser = async (email: string, password: string) => {
@@ -87,6 +90,19 @@ export const loginUser = async (email: string, password: string) => {
   }
 
   return data
+}
+
+export const registerUser = async (email: string, password: string, name: string, phoneNumber: string) => {
+  const payloads = [
+    { email, password, name, phoneNumber },
+    { email, password, fullName: name, phoneNumber },
+    { email, password, userName: name, phoneNumber },
+    { email, password, username: name, phoneNumber },
+    { email, password, name, phoneNumber, confirmPassword: password },
+  ]
+
+  const data = await postWithFallback(REGISTER_ENDPOINTS, payloads, "Registration failed")
+  const token = extractToken(data)
 }
 
 export const registerUser = async (email: string, password: string, name: string) => {
