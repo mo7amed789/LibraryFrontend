@@ -12,7 +12,7 @@ interface AuthContextType {
   user: User | null
   isAuthenticated: boolean
   login: (email: string, password: string) => Promise<void>
-  register: (email: string, password: string, name: string) => Promise<void>
+  register: (email: string, password: string, name: string, phoneNumber: string) => Promise<void>
   logout: () => void
 }
 
@@ -87,8 +87,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(fallbackUser))
   }
 
-  const register = async (email: string, password: string, name: string) => {
-    const response = await registerUser(email, password, name)
+  const register = async (email: string, password: string, name: string, phoneNumber: string) => {
+    const response = await registerUser(email, password, name, phoneNumber)
     const payload = normalizeUser(response.user) ?? normalizeUser(readTokenPayload())
 
     const newUser = payload ?? {
