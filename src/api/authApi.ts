@@ -76,6 +76,14 @@ const postWithFallback = async (
 export const loginUser = async (email: string, password: string) => {
   const data = await postWithFallback(LOGIN_ENDPOINTS, [{ email, password }], "Login failed")
   const token = extractToken(data)
+export const loginUser = async (email: string, password: string) => {
+  const data = await postWithFallback(LOGIN_ENDPOINTS, [{ email, password }], "Login failed")
+  const token = extractToken(data)
+const extractToken = (data: AuthResponse) => data.token ?? data.accessToken ?? data.jwt
+
+export const loginUser = async (email: string, password: string) => {
+  const res = await api.post<AuthResponse>("/auth/login", { email, password })
+  const token = extractToken(res.data)
 
   if (token) {
     localStorage.setItem("token", token)
@@ -95,12 +103,32 @@ export const registerUser = async (email: string, password: string, name: string
 
   const data = await postWithFallback(REGISTER_ENDPOINTS, payloads, "Registration failed")
   const token = extractToken(data)
+}
+
+export const registerUser = async (email: string, password: string, name: string) => {
+  const payloads = [
+    { email, password, name },
+    { email, password, fullName: name },
+    { email, password, userName: name },
+    { email, password, username: name },
+    { email, password, name, confirmPassword: password },
+  ]
+
+  const data = await postWithFallback(REGISTER_ENDPOINTS, payloads, "Registration failed")
+  const token = extractToken(data)
+  return res.data
+}
+
+export const registerUser = async (email: string, password: string, name: string) => {
+  const res = await api.post<AuthResponse>("/auth/register", { email, password, name })
+  const token = extractToken(res.data)
 
   if (token) {
     localStorage.setItem("token", token)
   }
 
   return data
+  return res.data
 }
 
 export const logout = () => {
