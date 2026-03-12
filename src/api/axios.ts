@@ -1,10 +1,11 @@
 import axios from "axios"
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5001/api"
+
 const api = axios.create({
-  baseURL: "https://localhost:7178/api",
+  baseURL: apiBaseUrl,
 })
 
-// Add request interceptor to include token
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token")
@@ -13,17 +14,15 @@ api.interceptors.request.use(
     }
     return config
   },
-  (error) => {
-    return Promise.reject(error)
-  }
+  (error) => Promise.reject(error)
 )
 
-// Add response interceptor to handle 401 errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("token")
+      localStorage.removeItem("library_user")
       window.location.href = "/login"
     }
     return Promise.reject(error)
